@@ -99,19 +99,21 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CommandHandler.cs" />
-    <Compile Include="MainPage.xaml.cs">
+    <Compile Include="Services\CommandHandler.cs" />
+    <Compile Include="Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NavigationService.cs" />
-    <Compile Include="Test.xaml.cs">
+    <Compile Include="Models\Result.cs" />
+    <Compile Include="Models\TestState.cs" />
+    <Compile Include="Services\NavigationService.cs" />
+    <Compile Include="Pages\Test.xaml.cs">
       <DependentUpon>Test.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TestPageModel.cs" />
-    <Compile Include="TestSetupPage.xaml.cs">
+    <Compile Include="Models\TestPageModel.cs" />
+    <Compile Include="Pages\TestSetupPage.xaml.cs">
       <DependentUpon>TestSetupPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TestSetupPageModel.cs" />
+    <Compile Include="Models\TestSetupPageModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -119,7 +121,6 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="UI_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\delete.png" />
@@ -137,27 +138,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainPage.xaml">
+    <Page Include="Pages\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Test.xaml">
+    <Page Include="Pages\Test.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TestSetupPage.xaml">
+    <Page Include="Pages\TestSetupPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TestModel\TestModel.csproj">
-      <Project>{b438f894-fe39-46e3-b868-748f0ba01f09}</Project>
-      <Name>TestModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WordTest.Manager\WordTest.Manager.csproj">
-      <Project>{9CDCC437-2577-4B8C-91C3-487935F21A55}</Project>
+    <ProjectReference Include="..\BL\WordTest.Manager.csproj">
+      <Project>{301f0c6f-cc94-4b55-b44a-440a09f9604c}</Project>
       <Name>WordTest.Manager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Model\WordsTest.Model.csproj">
+      <Project>{20e432d2-02b3-44d9-bc17-162d80e66285}</Project>
+      <Name>WordsTest.Model</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
