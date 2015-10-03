@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Windows.Input;
-using WordsTest.Model;
+using WordTes.UI.Models;
 
 namespace WordTes.UI.Services
 {
     public class CommandHandler : ICommand
     {
         private readonly Action _action;
-        private readonly Action<TestItem> _paramAction;
+        private readonly Action<TestItemWrapper> _paramAction;
         private readonly bool _canExecute;
 
         public CommandHandler(Action action, bool canExecute)
@@ -16,7 +16,7 @@ namespace WordTes.UI.Services
             _canExecute = canExecute;
         }
 
-        public CommandHandler(Action<TestItem> action, bool canExecute)
+        public CommandHandler(Action<TestItemWrapper> action, bool canExecute)
         {
             _paramAction = action;
             _canExecute = canExecute;
@@ -31,7 +31,7 @@ namespace WordTes.UI.Services
         {
             if (_paramAction != null)
             {
-                _paramAction((TestItem)parameter);
+                _paramAction((TestItemWrapper)parameter);
             }
             else
             {

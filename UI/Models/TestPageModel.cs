@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
-using UI;
 using UI.Annotations;
 using WordsTest.Model;
 using WordTes.UI.Services;
@@ -38,11 +38,12 @@ namespace WordTes.UI.Models
 
         public void Init()
         {
-            _manager = new Manager(Items, 90);
+            var list = Items.ToList();
+            _manager = new Manager(list, 90);
             CurrentWord = _manager.Get().Word;
         }
 
-        public ObservableCollection<TestItem> Items { get; set; }
+        public IList<TestItem> Items { get; set; }
 
         public string CurrentWord
         {
@@ -152,7 +153,7 @@ namespace WordTes.UI.Models
                     CurrentTestState = TestState.Check;
                     break;
                 case TestState.Done:
-                    App.NavigationService.Navigate<Pages.TestSetupPage>();
+                    App.NavigationService.Navigate<Pages.TestSetupPage>(Items);
                     break;
             }
         }

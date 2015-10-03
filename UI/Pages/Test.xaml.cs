@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Navigation;
 using WordsTest.Model;
 using WordTes.UI.Models;
@@ -14,7 +15,7 @@ namespace WordTes.UI.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var items = (ObservableCollection<TestItem>)e.Parameter;
+            var items = (IList<TestItem>)e.Parameter;
 
             var data = MainGrid.DataContext as TestPageModel;
 

@@ -4,15 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:src="using:WordTes.UI"
     xmlns:models="using:WordTes.UI.Models"
     mc:Ignorable="d">
 
     <Page.Resources>
         <models:TestSetupPageModel x:Key="PageModel" />
+        <models:BoolToVisibilityConverter x:Key="BoolToVisibility" />
     </Page.Resources>
 
-    <Grid DataContext="{StaticResource ResourceKey=PageModel}">
+    <Grid x:Name="MainGrid" DataContext="{StaticResource ResourceKey=PageModel}">
         <Grid.ChildrenTransitions>
             <TransitionCollection>
                 <EntranceThemeTransition/>
@@ -33,50 +33,50 @@
                 VerticalAlignment="Center"/>
 
             <ScrollViewer HorizontalScrollBarVisibility="Auto" Grid.Row="1">
-                <ItemsControl ItemsSource="{ Binding Path=Items, Mode=TwoWay }">
+                <ItemsControl ItemsSource="{ Binding Path=Items, Mode=TwoWay }" >
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid Margin="10,25,15,10">
+
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="45*"/>
-                                    <ColumnDefinition Width="45*"/>
+                                    <ColumnDefinition Width="40*"/>
+                                    <ColumnDefinition Width="40*"/>
+                                    <ColumnDefinition Width="10*"/>
                                     <ColumnDefinition Width="10*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Margin="10" Text="{Binding Word, Mode=TwoWay}" />
-                                <TextBox Margin="10" Grid.Column="1" Text="{Binding Translation, Mode=TwoWay}" />
+                                <TextBox Margin="10" Text="{Binding Item.Word, Mode=TwoWay}"  Loaded="FocusTextBoxOnLoad" />
+                                <TextBox Margin="10" Grid.Column="1" Text="{Binding Item.Translation, Mode=TwoWay}" />
                                 <Button Grid.Column="2" 
                                         CommandParameter="{Binding}"
+                                        Visibility="{Binding NotFirst, Converter={StaticResource BoolToVisibility}}"
                                         Command="{Binding Path=RemoveCommand, Source={StaticResource PageModel}}"
                                         Background="#FF0D6AA3" 
                                         Margin="10" 
                                         Height="80" 
                                         Width="80" >
-                                    <Image Source="Assets/delete.png"  Stretch="Fill" />
+                                    <Image Source="../Assets/delete.png"  Stretch="Fill" />
                                 </Button>
+                                <Button Grid.Column="3"
+                                        Visibility="{Binding Last, Converter={StaticResource BoolToVisibility} }"
+                                        Content="+" 
+                                        Background="#FF0D6AA3" 
+                                        Margin="10"                                        
+                                        Command="{Binding Path=AddCommand, Source={StaticResource PageModel}}"
+                                        Height="80"
+                                        Width="80"/>
                             </Grid>
                         </DataTemplate>
+                        
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
             <Grid Grid.Row="2" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Button Content="Add" 
-                        HorizontalAlignment="Stretch" 
-                        FontSize="24"
-                        Margin="10"
-                        Grid.Column="0" 
-                        Command="{Binding Path=AddCommand}"
-                        VerticalAlignment="Top"
-                        Height="50"/>
+
                 <Button Command="{Binding StartTestCommand}"
                         Content="Begin Test" 
                         HorizontalAlignment="Stretch" 
                         FontSize="24"
                         Margin="10"
-                        Grid.Column="1" 
                         VerticalAlignment="Top"
                         Height="50"/>
             </Grid>
