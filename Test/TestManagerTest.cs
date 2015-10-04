@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using WordsTest.Model;
@@ -63,22 +62,16 @@ namespace WordTest.Tests
             _manager = null;
         }
 
-        [TestCase(TestName = "Test manager gets random item from collection")]
-        public void GetItemFromCollection()
-        {
-            var originalCount = _list.Count;
-            var item = _manager.Get();
-            originalCount.ShouldBeEquivalentTo(_list.Count+1);
-            _list.FirstOrDefault(l => l.Equals(item)).Should().BeNull();
-        }
-
-        [TestCase(CheckResult.Incorrect, TestName = "Manager returns 'Incorrect' state if  user input corectness doesn't exceed treshold")]
-        [TestCase(CheckResult.Correct, TestName = "Manager returns 'Correct' state if  user input corectness does exceed treshold")]
-        public void CheckUserImput(CheckResult shoulBe)
+        [TestCase(CheckState.Incorrect, TestName = "Manager returns 'Incorrect' state if  user input corectness doesn't exceed treshold")]
+        [TestCase(CheckState.Correct, TestName = "Manager returns 'Correct' state if  user input corectness does exceed treshold")]
+        public void CheckUserImput(CheckState shoulBe)
         {
             var item = _manager.Get();
-            var result = _manager.Check(shoulBe == CheckResult.Correct ? CorrectInputByWord(item.Word) : IncorrectInputByWord(item.Word));
-            result.Should().Be(shoulBe);
+            var result =
+                _manager.Check(shoulBe == CheckState.Correct
+                    ? CorrectInputByWord(item.Word)
+                    : IncorrectInputByWord(item.Word));
+            result.State.Should().Be(shoulBe);
         }
 
         [TestCase(TestName = "Incorrectly guessed item is returned to the list by the next pull")]
@@ -96,9 +89,11 @@ namespace WordTest.Tests
             _list.RemoveAt(0);
             _list.RemoveAt(1);
 
-            var item = _manager.Get();
-            _manager.Check(IncorrectInputByWord(item.Word));
-            var item2 = _manager.Get();
+            var manager = new Manager.Manager(_list, 65);
+            var item = manager.Get();
+            manager.Check(IncorrectInputByWord(item.Word));
+            var item2 = manager.Get();
+
             Assert.True(item.Equals(item2));
         }
 
@@ -108,10 +103,11 @@ namespace WordTest.Tests
             _list.RemoveAt(0);
             _list.RemoveAt(1);
 
-            var item = _manager.Get();
-            var state = _manager.Check(CorrectInputByWord(item.Word));
+            var  manager = new Manager.Manager(_list, 65);
+            var item = manager.Get();
+            var result = manager.Check(CorrectInputByWord(item.Word));
 
-            state.ShouldBeEquivalentTo(CheckResult.Done);
+            result.State.ShouldBeEquivalentTo(CheckState.Done);
         }
     }
 }

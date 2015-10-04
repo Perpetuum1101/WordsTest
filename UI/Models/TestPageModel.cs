@@ -152,21 +152,21 @@ namespace WordTes.UI.Models
 
         private void ChangeStateByResult(CheckResult result)
         {
-            switch (result)
+            switch (result.State)
             {
-                case CheckResult.Correct:
-                    Result.Message = "Correct!";
+                case CheckState.Correct:
+                    Result.Message = string.Format("Correct! ({0}%)", result.Correctness);
                     Progress = "Progress " + _manager.Progress;
                     Result.Color = new SolidColorBrush(Colors.Green);
                     CurrentTestState = TestState.Next;
                     break;
-                case CheckResult.Incorrect:
-                    Result.Message = "Incorrect!";
+                case CheckState.Incorrect:
+                    Result.Message = string.Format("Incorrect! ({0}%)", result.Correctness);
                     Result.Color = new SolidColorBrush(Colors.Red);
                     CurrentTestState = TestState.Next;
                     break;
-                case CheckResult.Done:
-                    Result.Message = "Correct!";
+                case CheckState.Done:
+                    Result.Message = string.Format("Correct! ({0}%)", result.Correctness);
                     Result.Color = new SolidColorBrush(Colors.Green);
                     CurrentTestState = TestState.Done;
                     Progress = "All done!";

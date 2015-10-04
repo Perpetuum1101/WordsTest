@@ -45,10 +45,11 @@ namespace WordTest.Manager
 
         public CheckResult Check(string input)
         {
-            CheckResult result;
+            var result = new CheckResult();
+
             if (string.IsNullOrWhiteSpace(input))
             {
-                result = CheckResult.Incorrect;
+                result.State = CheckState.Incorrect;
             }
             else
             {
@@ -59,20 +60,22 @@ namespace WordTest.Manager
                     longer = _currentItem.Translation.Length;
                 }
 
-                var per = Math.Floor(100 - (distance/(float) longer*100));
+                result.Correctness = (int)Math.Floor(100 - (distance/(float) longer*100));
 
-                result = per >= _treshold ? CheckResult.Correct : CheckResult.Incorrect;
+                result.State = result.Correctness >= _treshold
+                    ? CheckState.Correct
+                    : CheckState.Incorrect;
             }
 
-            if (result == CheckResult.Correct)
+            if (result.State == CheckState.Correct)
             {
                 _completed++;
                 _currentItem = null;
             }
 
-            if (result == CheckResult.Correct && _items.Count == 0)
+            if (result.State == CheckState.Correct && _items.Count == 0)
             {
-                result = CheckResult.Done;
+                result.State = CheckState.Done;
             }
 
             return result;
