@@ -10,8 +10,12 @@
                 <Setter Property="Background" Value="#333337"/>
             </Style>
             <Style TargetType="Button">
-                <Setter Property="Background" Value="#333344"></Setter>
-                <Setter Property="BorderBrush" Value="White"></Setter>
+                <Setter Property="Background" Value="#333344" />
+                <Setter Property="BorderBrush" Value="White" />
+            </Style>
+            <Style TargetType="TextBox">
+                <Setter Property="Height" Value="35" />
+                <Setter Property="Margin" Value="7" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>
