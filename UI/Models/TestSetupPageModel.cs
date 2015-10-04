@@ -75,7 +75,9 @@ namespace WordTes.UI.Models
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            var visible = (Visibility) value;
+
+            return visible == Visibility.Visible;
         }
     }
 
@@ -102,9 +104,16 @@ namespace WordTes.UI.Models
 
         public ObservableCollection<TestItemWrapper> Items { get; set; }
 
-        public ICommand AddCommand => _addCommand ?? (_addCommand = new CommandHandler(Add, _canExecute));
-        public ICommand RemoveCommand => _removeCommand ?? (_removeCommand = new CommandHandler(Remove, _canExecute));
-        public ICommand StartTestCommand => _startTestCommand ?? (_startTestCommand = new CommandHandler(StartTest, _canExecute));
+        public ICommand AddCommand => _addCommand ??
+                                      (_addCommand = new CommandHandler(Add, _canExecute));
+
+        public ICommand RemoveCommand => _removeCommand ??
+                                         (_removeCommand =
+                                             new CommandHandler(Remove, _canExecute));
+
+        public ICommand StartTestCommand => _startTestCommand ??
+                                            (_startTestCommand =
+                                                new CommandHandler(StartTest, _canExecute));
 
         public void Add()
         {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Windows.UI;
@@ -23,6 +22,7 @@ namespace WordTes.UI.Models
         private string _currentTransaltion;
         private string _checkButtonText;
         private TestState _testState;
+        private string _progress;
 
         public TestPageModel()
         {
@@ -38,9 +38,9 @@ namespace WordTes.UI.Models
 
         public void Init()
         {
-            var list = Items.ToList();
-            _manager = new Manager(list, 90);
+            _manager = new Manager(Items, 90);
             CurrentWord = _manager.Get().Word;
+            Progress = "Progress " + _manager.Progress;
         }
 
         public IList<TestItem> Items { get; set; }
@@ -72,6 +72,16 @@ namespace WordTes.UI.Models
             {
                 _checkButtonText = value;
                 OnPropertyChanged(nameof(CheckButtonText));
+            }
+        }
+
+        public string Progress
+        {
+            get { return _progress; }
+            set
+            {
+                _progress = value;
+                OnPropertyChanged(nameof(Progress));
             }
         }
 
@@ -124,27 +134,7 @@ namespace WordTes.UI.Models
             {
                 case TestState.Check:
                     var result = _manager.Check(CurrentTranslation);
-
-                    switch (result)
-                    {
-                        case CheckResult.Correct:
-                            Result.Message = "Correct!";
-                            Result.Color = new SolidColorBrush(Colors.Green);
-                            CurrentTestState = TestState.Next;
-                            break;
-                        case CheckResult.Incorrect:
-                            Result.Message = "Incorrect!";
-                            Result.Color =new SolidColorBrush(Colors.Red);
-                            CurrentTestState = TestState.Next;
-                            break;
-                        case CheckResult.Done:
-                            Result.Message = "Correct!";
-                            Result.Color = new SolidColorBrush(Colors.Green);
-                            CurrentTestState = TestState.Done;
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    ChangeStateByResult(result);
                     break;
                 case TestState.Next:
                     CurrentWord = _manager.Get().Word;
@@ -155,6 +145,34 @@ namespace WordTes.UI.Models
                 case TestState.Done:
                     App.NavigationService.Navigate<Pages.TestSetupPage>(Items);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void ChangeStateByResult(CheckResult result)
+        {
+            switch (result)
+            {
+                case CheckResult.Correct:
+                    Result.Message = "Correct!";
+                    Progress = "Progress " + _manager.Progress;
+                    Result.Color = new SolidColorBrush(Colors.Green);
+                    CurrentTestState = TestState.Next;
+                    break;
+                case CheckResult.Incorrect:
+                    Result.Message = "Incorrect!";
+                    Result.Color = new SolidColorBrush(Colors.Red);
+                    CurrentTestState = TestState.Next;
+                    break;
+                case CheckResult.Done:
+                    Result.Message = "Correct!";
+                    Result.Color = new SolidColorBrush(Colors.Green);
+                    CurrentTestState = TestState.Done;
+                    Progress = "All done!";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }

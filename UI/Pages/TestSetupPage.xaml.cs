@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -17,7 +18,7 @@ namespace WordTes.UI.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var items = (ObservableCollection<TestItem>)e.Parameter;
+            var items = (IList<TestItem>)e.Parameter;
 
             if (items != null && items.Count != 0)
             {
@@ -25,6 +26,7 @@ namespace WordTes.UI.Pages
 
                 if (data != null)
                 {
+                    data.Items = new ObservableCollection<TestItemWrapper>();
                     foreach (var item in items)
                     {
                         data.Items.Add(new TestItemWrapper
