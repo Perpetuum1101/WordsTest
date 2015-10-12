@@ -1,92 +1,28 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Data;
 using UI.Annotations;
 using WordsTest.Model;
 using WordTes.UI.Services;
+using WordTest.Repository;
 
 namespace WordTes.UI.Models
 {
-    public class TestItemWrapper : INotifyPropertyChanged
-    {
-        private TestItem _item;
-        private bool _first;
-        private bool _last;
-
-        public TestItemWrapper()
-        {
-            Last = false;
-            NotFirst = true;
-            Item = new TestItem();
-        }
-
-        public TestItem Item
-        {
-            get { return _item; }
-            set
-            {
-                _item = value;
-                OnPropertyChanged(nameof(Item));
-            }
-        }
-
-        public bool Last
-        {
-            get { return _last; }
-            set
-            {
-                _last = value;
-                OnPropertyChanged(nameof(Last));
-            }
-        }
-
-        public bool NotFirst
-        {
-            get { return _first; }
-            set
-            {
-                _first = value;
-                OnPropertyChanged(nameof(NotFirst));
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class BoolToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            var visible = (bool) value;
-
-            return visible ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            var visible = (Visibility) value;
-
-            return visible == Visibility.Visible;
-        }
-    }
-
     public class TestSetupPageModel : INotifyPropertyChanged
     {
         private ICommand _addCommand;
         private ICommand _removeCommand;
         private ICommand _startTestCommand;
+        private ICommand _saveCommand;
         private readonly bool _canExecute;
+        private ITestRepository _repository;
+        private string _currentTest;
+        private bool _showTestName;
+        private string _testName;
+        private bool _saveIsEnabled;
 
         public TestSetupPageModel()
         {
@@ -99,21 +35,89 @@ namespace WordTes.UI.Models
                 }
             };
 
+            Tests = new ObservableCollection<string>(Repository.GetTestsList());
+            Tests.Insert(0, "New");
+
             _canExecute = true;
+        }
+
+        public string CurrentTest
+        {
+            get { return _currentTest; }
+
+            set
+            {
+                _currentTest = value;
+                OnPropertyChanged(nameof(CurrentTest));
+                ShowTestName = _currentTest == "New";
+                if (!ShowTestName)
+                {
+                    TestName = _currentTest;
+                    LoadTest(_currentTest);
+                }
+                else
+                {
+                    TestName = null;
+                }
+                
+
+                if (!string.IsNullOrWhiteSpace(_currentTest))
+                {
+                    LoadTest(_currentTest);
+                }
+            }
         }
 
         public ObservableCollection<TestItemWrapper> Items { get; set; }
 
-        public ICommand AddCommand => _addCommand ??
-                                      (_addCommand = new CommandHandler(Add, _canExecute));
+        public ObservableCollection<string> Tests { get; set; }
 
-        public ICommand RemoveCommand => _removeCommand ??
-                                         (_removeCommand =
-                                             new CommandHandler(Remove, _canExecute));
+        public bool ShowTestName
+        {
+            get { return _showTestName; }
+            set
+            {
+                _showTestName = value;
+                OnPropertyChanged(nameof(ShowTestName));
+            }
+        }
 
-        public ICommand StartTestCommand => _startTestCommand ??
-                                            (_startTestCommand =
-                                                new CommandHandler(StartTest, _canExecute));
+        public bool SaveIsEnabled
+        {
+            get { return _saveIsEnabled; }
+            set
+            {
+                _saveIsEnabled = value;
+                OnPropertyChanged(nameof(SaveIsEnabled));
+            }
+        }
+
+        public string TestName
+        {
+            get { return _testName; }
+            set
+            {
+                _testName = value;
+                SaveIsEnabled = !string.IsNullOrWhiteSpace(TestName);
+                OnPropertyChanged(nameof(TestName));
+            }
+        }
+
+        public ITestRepository Repository => _repository ?? (_repository = new TestRepository());
+
+        public ICommand AddCommand =>
+            _addCommand ?? (_addCommand = new CommandHandler(Add, _canExecute));
+
+        public ICommand RemoveCommand =>
+            _removeCommand ?? (_removeCommand = new CommandHandler(Remove, _canExecute));
+
+        public ICommand StartTestCommand =>
+            _startTestCommand ?? (_startTestCommand = new CommandHandler(StartTest, _canExecute));
+
+        public ICommand SaveCommand =>
+            _saveCommand ?? (_saveCommand = new CommandHandler(SaveTest, _canExecute));
+
+
 
         public void Add()
         {
@@ -138,6 +142,43 @@ namespace WordTes.UI.Models
         {
             var items = Items.Select(i => i.Item).ToList();
             App.NavigationService.Navigate<Pages.Test>(items);
+        }
+
+        public void SaveTest()
+        {
+            var testItems = Items.Select(item => item.Item).ToList();
+
+            Repository.SaveTest(TestName, testItems);
+            
+        }
+
+        public void LoadTest(string testName)
+        {
+            Items.Clear();
+            if (_currentTest == "New")
+            {
+                Items.Add(new TestItemWrapper
+                {
+                    NotFirst = false,
+                    Last = true
+                });
+
+            }
+            else
+            {
+                var items = Repository.GeTestItems(testName);
+
+                foreach (var item in items)
+                {
+                    Items.Add(new TestItemWrapper
+                    {
+                        Item = item
+                    });
+                }
+
+                Items.First().NotFirst = false;
+                Items.Last().Last = true;
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

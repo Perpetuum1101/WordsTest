@@ -25,14 +25,14 @@ namespace WordTest.Manager
         public TestItem Get()
         {
             var index = 0;
-            if (_currentItem != null)
-            {
-                _items.Add(_currentItem);
-                _currentItem = null;
-            }
+           
             if (_items.Count > 1)
             {
                 index = _random.Next(0, _items.Count);
+            }
+            if (_currentItem != null)
+            {
+                _items.Add(_currentItem);
             }
 
             _currentItem = _items[index];

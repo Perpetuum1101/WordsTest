@@ -1,4 +1,5 @@
 ﻿using Windows.UI.Xaml;
+using WordTest.Repository;
 
 namespace WordTes.UI.Pages
 {
@@ -7,6 +8,9 @@ namespace WordTes.UI.Pages
         public MainPage()
         {
             InitializeComponent();
+
+            //var repo = new TestRepository();
+            //repo.DeleteTest("Test");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

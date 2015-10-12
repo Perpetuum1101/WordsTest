@@ -74,6 +74,26 @@ namespace WordTest.Tests
             result.State.Should().Be(shoulBe);
         }
 
+        [TestCase(TestName = "Manager never returns same item two times in a row")]
+        public void CheckSameItemReturn()
+        {
+            var shouldBe = true;
+            for (var i = 0; i < 1000; i++)
+            {
+                var manager = new Manager.Manager(_list, 65);
+                var item = manager.Get();
+                manager.Check(IncorrectInputByWord(item.Word));
+                var item2 = manager.Get();
+                shouldBe = !item2.Equals(item);
+                if (!shouldBe)
+                {
+                    break;
+                }
+            }
+
+            shouldBe.Should().BeTrue();
+        }
+
         [TestCase(TestName = "Incorrectly guessed item is returned to the list by the next pull")]
         public void IncorrectItemReturnedByNextPull()
         {

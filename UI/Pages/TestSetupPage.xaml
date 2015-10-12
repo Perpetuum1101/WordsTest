@@ -25,26 +25,47 @@
                 <RowDefinition Height="10*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock 
+
+            <!--<TextBlock 
                 Text="{StaticResource AppName}" 
                 Style="{StaticResource HeaderTextBlockStyle}" 
                 Grid.Row="0"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Center"/>
+                VerticalAlignment="Center"/>-->
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <ComboBox Grid.Row="0" 
+                      ItemsSource="{Binding Path=Tests }"
+                      SelectedItem="{Binding Path=CurrentTest, Mode=TwoWay}"
+                      Margin="10,10,50,10"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center" />
+                <TextBox Grid.Row="1" 
+                         Text="{Binding TestName, Mode=TwoWay}"
+                         Margin="10,10,50,10"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Center"
+                         Visibility="{Binding ShowTestName, Converter={StaticResource BoolToVisibility}}" />
+            </Grid>
 
             <ScrollViewer HorizontalScrollBarVisibility="Auto" Grid.Row="1">
                 <ItemsControl ItemsSource="{ Binding Path=Items, Mode=TwoWay }" >
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid Margin="10,25,15,10">
-
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="40*"/>
                                     <ColumnDefinition Width="40*"/>
                                     <ColumnDefinition Width="10*"/>
                                     <ColumnDefinition Width="10*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Margin="10" Text="{Binding Item.Word, Mode=TwoWay}"  Loaded="FocusTextBoxOnLoad" />
+                                <TextBox Margin="10" 
+                                         Text="{Binding Item.Word, Mode=TwoWay}"  
+                                         Loaded="FocusTextBoxOnLoad" />
                                 <TextBox Margin="10" Grid.Column="1" Text="{Binding Item.Translation, Mode=TwoWay}" />
                                 <Button Grid.Column="2" 
                                         CommandParameter="{Binding}"
@@ -66,18 +87,33 @@
                                         Width="80"/>
                             </Grid>
                         </DataTemplate>
-                        
+
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
             <Grid Grid.Row="2" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                
+                <Button Command="{Binding SaveCommand}"
+                        IsEnabled="{Binding SaveIsEnabled}"
+                        Grid.Column="0"
+                        Content="Save"
+                        HorizontalAlignment="Stretch"
+                        Margin="10"
+                        VerticalAlignment="Center"
+                        FontSize="24"
+                        Height="50" />
 
                 <Button Command="{Binding StartTestCommand}"
+                        Grid.Column="1"
                         Content="Begin Test" 
                         HorizontalAlignment="Stretch" 
                         FontSize="24"
                         Margin="10"
-                        VerticalAlignment="Top"
+                        VerticalAlignment="Center"
                         Height="50"/>
             </Grid>
         </Grid>
