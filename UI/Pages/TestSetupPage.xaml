@@ -20,36 +20,43 @@
         </Grid.ChildrenTransitions>
         <Grid Margin="10">
             <Grid.RowDefinitions>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="80*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="90*"/>
                 <RowDefinition Height="10*"/>
             </Grid.RowDefinitions>
-
-
-            <!--<TextBlock 
-                Text="{StaticResource AppName}" 
-                Style="{StaticResource HeaderTextBlockStyle}" 
-                Grid.Row="0"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"/>-->
             <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="95*"/>
+                    <ColumnDefinition Width="5*"/>
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition/>
                 </Grid.RowDefinitions>
 
                 <ComboBox Grid.Row="0" 
-                      ItemsSource="{Binding Path=Tests }"
-                      SelectedItem="{Binding Path=CurrentTest, Mode=TwoWay}"
-                      Margin="10,10,50,10"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Center" />
+                          Grid.Column="0"
+                          Margin="5"
+                          ItemsSource="{Binding Path=Tests, Mode=TwoWay}"
+                          SelectedItem="{Binding Path=CurrentTest, Mode=TwoWay}"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Center" />
+                <Button Grid.Row="0"
+                        Grid.Column="1"
+                        Command="{Binding Path=DeleteTestCommand}"
+                        Style="{StaticResource RoundButtonStyle}"
+                        Visibility="{Binding ShowTestDeleteButton, 
+                                     Converter={StaticResource BoolToVisibility}}">
+                    <SymbolIcon Symbol="Delete"/>
+                </Button>
                 <TextBox Grid.Row="1" 
+                         Grid.Column="0"
                          Text="{Binding TestName, Mode=TwoWay}"
-                         Margin="10,10,50,10"
                          HorizontalAlignment="Stretch"
                          VerticalAlignment="Center"
-                         Visibility="{Binding ShowTestName, Converter={StaticResource BoolToVisibility}}" />
+                         PlaceholderText="Enter test name here"
+                         Visibility="{Binding ShowTestName,
+                                      Converter={StaticResource BoolToVisibility}}" />
             </Grid>
 
             <ScrollViewer HorizontalScrollBarVisibility="Auto" Grid.Row="1">
@@ -58,33 +65,32 @@
                         <DataTemplate>
                             <Grid Margin="10,25,15,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="40*"/>
-                                    <ColumnDefinition Width="40*"/>
-                                    <ColumnDefinition Width="10*"/>
+                                    <ColumnDefinition Width="45*"/>
+                                    <ColumnDefinition Width="45*"/>
                                     <ColumnDefinition Width="10*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Margin="10" 
-                                         Text="{Binding Item.Word, Mode=TwoWay}"  
+                                <TextBox Text="{Binding Item.Word, Mode=TwoWay}"  
                                          Loaded="FocusTextBoxOnLoad" />
-                                <TextBox Margin="10" Grid.Column="1" Text="{Binding Item.Translation, Mode=TwoWay}" />
-                                <Button Grid.Column="2" 
-                                        CommandParameter="{Binding}"
-                                        Visibility="{Binding NotFirst, Converter={StaticResource BoolToVisibility}}"
-                                        Command="{Binding Path=RemoveCommand, Source={StaticResource PageModel}}"
-                                        Background="#FF0D6AA3" 
-                                        Margin="10" 
-                                        Height="80" 
-                                        Width="80" >
-                                    <Image Source="../Assets/delete.png"  Stretch="Fill" />
-                                </Button>
-                                <Button Grid.Column="3"
-                                        Visibility="{Binding Last, Converter={StaticResource BoolToVisibility} }"
-                                        Content="+" 
-                                        Background="#FF0D6AA3" 
-                                        Margin="10"                                        
-                                        Command="{Binding Path=AddCommand, Source={StaticResource PageModel}}"
-                                        Height="80"
-                                        Width="80"/>
+                                <TextBox Grid.Column="1" 
+                                         Text="{Binding Item.Translation, Mode=TwoWay}" />
+                                <StackPanel Grid.Column="2" 
+                                            Orientation="Horizontal" >
+                                    <Button Style="{StaticResource RoundButtonStyle}"
+                                            Visibility="{Binding Last, 
+                                                         Converter={StaticResource BoolToVisibility}}"
+                                            Command="{Binding Path=AddCommand,
+                                                      Source={StaticResource PageModel}}">
+                                        <SymbolIcon Symbol="Add"/>
+                                    </Button>
+                                    <Button Style="{StaticResource RoundButtonStyle}"
+                                            CommandParameter="{Binding}"
+                                            Visibility="{Binding NotFirst,
+                                                         Converter={StaticResource BoolToVisibility}}"
+                                            Command="{Binding Path=RemoveCommand, 
+                                                      Source={StaticResource PageModel}}">
+                                        <SymbolIcon Symbol="Delete"/>
+                                    </Button>
+                                </StackPanel>
                             </Grid>
                         </DataTemplate>
 
@@ -93,28 +99,24 @@
             </ScrollViewer>
             <Grid Grid.Row="2" >
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                
-                <Button Command="{Binding SaveCommand}"
-                        IsEnabled="{Binding SaveIsEnabled}"
-                        Grid.Column="0"
-                        Content="Save"
-                        HorizontalAlignment="Stretch"
-                        Margin="10"
-                        VerticalAlignment="Center"
-                        FontSize="24"
-                        Height="50" />
 
+                <Button Command="{Binding SaveCommand}"
+                        Margin="5"
+                        Style="{StaticResource RoundButtonStyle}"
+                        IsEnabled="{Binding SaveIsEnabled}"
+                        Grid.Column="1">
+                    <SymbolIcon Symbol="Save"/>
+                </Button>
                 <Button Command="{Binding StartTestCommand}"
-                        Grid.Column="1"
-                        Content="Begin Test" 
-                        HorizontalAlignment="Stretch" 
-                        FontSize="24"
-                        Margin="10"
-                        VerticalAlignment="Center"
-                        Height="50"/>
+                        Style="{StaticResource RoundButtonStyle}"
+                        Margin="5"
+                        Grid.Column="2">
+                    <SymbolIcon Symbol="Forward" />
+                </Button>
             </Grid>
         </Grid>
     </Grid>

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Windows.UI;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using UI.Annotations;
 using WordsTest.Model;
@@ -15,14 +16,18 @@ namespace WordTes.UI.Models
     public class TestPageModel : INotifyPropertyChanged
     {
         private ICommand _checkCommand;
+        private ICommand _correctAnswerCommand;
         private readonly bool _canExecute;
         private IManager _manager;
         private Result _result;
         private string _currentWord;
         private string _currentTransaltion;
-        private string _checkButtonText;
+        private Symbol _checkButtonSymbol;
         private TestState _testState;
         private string _progress;
+        private string _correctAnswer;
+        private bool _showCorrectAnswerButton;
+        private bool _showCorrectAnswer;
 
         public TestPageModel()
         {
@@ -55,6 +60,38 @@ namespace WordTes.UI.Models
             }
         }
 
+        public bool ShowCorrectAnswer
+        {
+            get { return _showCorrectAnswer; }
+
+            set
+            {
+                _showCorrectAnswer = value; 
+                OnPropertyChanged(nameof(ShowCorrectAnswer));
+            }
+
+        }
+
+        public string CorrectAnswer
+        {
+            get { return _correctAnswer; }
+            set
+            {
+                _correctAnswer = value;
+                OnPropertyChanged(nameof(CorrectAnswer));
+            }
+        }
+
+        public bool ShowCorrectAnswerButton
+        {
+            get { return _showCorrectAnswerButton; }
+            set
+            {
+                _showCorrectAnswerButton = value;
+                OnPropertyChanged(nameof(ShowCorrectAnswerButton));
+            }
+        }
+
         public string CurrentTranslation
         {
             get { return _currentTransaltion; }
@@ -65,13 +102,13 @@ namespace WordTes.UI.Models
             }
         }
 
-        public string CheckButtonText
+        public Symbol CheckButtonSymbol
         {
-            get { return _checkButtonText; }
+            get { return _checkButtonSymbol; }
             set
             {
-                _checkButtonText = value;
-                OnPropertyChanged(nameof(CheckButtonText));
+                _checkButtonSymbol = value;
+                OnPropertyChanged(nameof(CheckButtonSymbol));
             }
         }
 
@@ -94,13 +131,13 @@ namespace WordTes.UI.Models
                 switch (value)
                 {
                     case TestState.Check:
-                        CheckButtonText = "Check";
+                        CheckButtonSymbol = Symbol.Accept;
                         break;
                     case TestState.Next:
-                        CheckButtonText = "Next";
+                        CheckButtonSymbol = Symbol.Forward;
                         break;
                     case TestState.Done:
-                        CheckButtonText = "Done";
+                        CheckButtonSymbol = Symbol.Home;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(value), value, null);
@@ -119,6 +156,8 @@ namespace WordTes.UI.Models
         }
 
         public ICommand CheckCommand => _checkCommand ?? (_checkCommand = new CommandHandler(Check, _canExecute));
+
+        public ICommand ShowAnswerCommand => _correctAnswerCommand ?? (_correctAnswerCommand = new CommandHandler(ShowCorrectAnswerClick, _canExecute));
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -141,6 +180,8 @@ namespace WordTes.UI.Models
                     CurrentTranslation = null;
                     Result.Message = string.Empty;
                     CurrentTestState = TestState.Check;
+                    ShowCorrectAnswerButton = false;
+                    ShowCorrectAnswer = false;
                     break;
                 case TestState.Done:
                     App.NavigationService.Navigate<Pages.TestSetupPage>(Items);
@@ -148,6 +189,11 @@ namespace WordTes.UI.Models
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        public void ShowCorrectAnswerClick()
+        {
+            ShowCorrectAnswer = true;
         }
 
         private void ChangeStateByResult(CheckResult result)
@@ -164,6 +210,8 @@ namespace WordTes.UI.Models
                     Result.Message = string.Format("Incorrect! ({0}%)", result.Correctness);
                     Result.Color = new SolidColorBrush(Colors.Red);
                     CurrentTestState = TestState.Next;
+                    CorrectAnswer = result.CorrectAnswer;
+                    ShowCorrectAnswerButton = true;
                     break;
                 case CheckState.Done:
                     Result.Message = string.Format("Correct! ({0}%)", result.Correctness);

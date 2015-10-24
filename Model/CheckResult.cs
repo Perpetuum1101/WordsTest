@@ -13,5 +13,7 @@ namespace WordsTest.Model
         public CheckState State { get; set; }
 
         public int Correctness { get; set; }
+
+        public string CorrectAnswer { get; set; }
     }
 }

@@ -6,16 +6,56 @@
     <Application.Resources>
         <ResourceDictionary>
             <x:String x:Key="AppName">Praise Zorb!</x:String>
-            <Style TargetType="Grid">
-                <Setter Property="Background" Value="#333337"/>
-            </Style>
-            <Style TargetType="Button">
-                <Setter Property="Background" Value="#333344" />
-                <Setter Property="BorderBrush" Value="White" />
+            <Style x:Key="RoundButtonStyle" TargetType="Button">
+                <Setter Property="Width" Value="50"/>
+                <Setter Property="Height" Value="50"/>
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="30"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Ellipse Name="Ellipse" Grid.Row="0" StrokeThickness="1" Fill="{TemplateBinding Background}" Height="40" Width="40"  Stroke="White"></Ellipse>
+                                <ContentPresenter Name="Content" Grid.Row="0" FontSize="{TemplateBinding FontSize}" FontFamily="{TemplateBinding FontFamily}" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+                                <TextBlock Text="{TemplateBinding Tag}" Grid.Row="1" Margin="0,-2,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Foreground="White" FontFamily="Segoe Ui"></TextBlock>
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal"/>
+                                        <VisualState x:Name="Pressed">
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="Ellipse">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="White"/>
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="Content">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="Black"/>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="Ellipse">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="0.33"/>
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="Content">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="0.33"/>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
             </Style>
             <Style TargetType="TextBox">
-                <Setter Property="Height" Value="35" />
-                <Setter Property="Margin" Value="7" />
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Height" Value="20" />
+                <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>

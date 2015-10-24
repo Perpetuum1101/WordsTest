@@ -72,6 +72,10 @@ namespace WordTest.Manager
                 _completed++;
                 _currentItem = null;
             }
+            else
+            {
+                result.CorrectAnswer = _currentItem.Translation;
+            }
 
             if (result.State == CheckState.Correct && _items.Count == 0)
             {

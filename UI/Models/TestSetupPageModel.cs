@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using UI.Annotations;
-using WordsTest.Model;
 using WordTes.UI.Services;
 using WordTest.Repository;
 
@@ -13,16 +11,30 @@ namespace WordTes.UI.Models
 {
     public class TestSetupPageModel : INotifyPropertyChanged
     {
+        #region Constants
+
+        public string DefaulTestName = "New";
+
+        #endregion
+
+        #region Private
+
         private ICommand _addCommand;
         private ICommand _removeCommand;
         private ICommand _startTestCommand;
         private ICommand _saveCommand;
+        private ICommand _deleteTestCommand;
         private readonly bool _canExecute;
         private ITestRepository _repository;
         private string _currentTest;
         private bool _showTestName;
         private string _testName;
         private bool _saveIsEnabled;
+        private bool _showTestDeleteButton;
+
+        #endregion
+
+        #region Constructor
 
         public TestSetupPageModel()
         {
@@ -34,11 +46,24 @@ namespace WordTes.UI.Models
                     Last = true
                 }
             };
-
-            Tests = new ObservableCollection<string>(Repository.GetTestsList());
-            Tests.Insert(0, "New");
-
+            Tests = new ObservableCollection<string>();
+            RefreshTestList(DefaulTestName);
+            _showTestDeleteButton = false;
             _canExecute = true;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public bool ShowTestDeleteButton
+        {
+            get { return _showTestDeleteButton; }
+            set
+            {
+                _showTestDeleteButton = value;
+                OnPropertyChanged(nameof(ShowTestDeleteButton));
+            }
         }
 
         public string CurrentTest
@@ -49,22 +74,12 @@ namespace WordTes.UI.Models
             {
                 _currentTest = value;
                 OnPropertyChanged(nameof(CurrentTest));
-                ShowTestName = _currentTest == "New";
-                if (!ShowTestName)
-                {
-                    TestName = _currentTest;
-                    LoadTest(_currentTest);
-                }
-                else
-                {
-                    TestName = null;
-                }
-                
+                ShowTestName = _currentTest == DefaulTestName;
+                ShowTestDeleteButton = !ShowTestName;
 
-                if (!string.IsNullOrWhiteSpace(_currentTest))
-                {
-                    LoadTest(_currentTest);
-                }
+                TestName = !ShowTestName ? _currentTest : null;
+
+                ChangeTest(_currentTest);
             }
         }
 
@@ -103,6 +118,10 @@ namespace WordTes.UI.Models
             }
         }
 
+        #endregion
+
+        #region Fields
+
         public ITestRepository Repository => _repository ?? (_repository = new TestRepository());
 
         public ICommand AddCommand =>
@@ -117,7 +136,12 @@ namespace WordTes.UI.Models
         public ICommand SaveCommand =>
             _saveCommand ?? (_saveCommand = new CommandHandler(SaveTest, _canExecute));
 
+        public ICommand DeleteTestCommand =>
+            _deleteTestCommand ?? (_deleteTestCommand = new CommandHandler(DeleteTest, _canExecute));
 
+        #endregion
+
+        #region Button Actions
 
         public void Add()
         {
@@ -147,39 +171,81 @@ namespace WordTes.UI.Models
         public void SaveTest()
         {
             var testItems = Items.Select(item => item.Item).ToList();
-
             Repository.SaveTest(TestName, testItems);
-            
+            RefreshTestList(TestName);
         }
 
-        public void LoadTest(string testName)
+        public void DeleteTest()
         {
+            Repository.DeleteTest(CurrentTest);
+            RefreshTestList(DefaulTestName);
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void RefreshTestList(string testToSelect)
+        {
+            Tests.Clear();
+            var tests = new ObservableCollection<string>(Repository.GetTestsList());
+            foreach (var test in tests)
+            {
+                Tests.Add(test);
+            }
+
+            Tests.Insert(0, DefaulTestName);
+            CurrentTest = testToSelect;
+        }
+
+        private void ChangeTest(string testName)
+        {
+            if (string.IsNullOrWhiteSpace(testName))
+            {
+                return;
+            }
             Items.Clear();
             if (_currentTest == "New")
             {
-                Items.Add(new TestItemWrapper
-                {
-                    NotFirst = false,
-                    Last = true
-                });
-
+                AddInitialTestItem();
             }
             else
             {
-                var items = Repository.GeTestItems(testName);
-
-                foreach (var item in items)
-                {
-                    Items.Add(new TestItemWrapper
-                    {
-                        Item = item
-                    });
-                }
-
-                Items.First().NotFirst = false;
-                Items.Last().Last = true;
+                LoadTest(testName);
             }
         }
+
+        private void AddInitialTestItem()
+        {
+            Items.Add(new TestItemWrapper
+            {
+                NotFirst = false,
+                Last = true
+            });
+        }
+
+
+        private void LoadTest(string testName)
+        {
+            var items = Repository.GeTestItems(testName);
+
+            foreach (var item in items)
+            {
+                Items.Add(new TestItemWrapper
+                {
+                    Item = item
+                });
+            }
+
+            Items.First().NotFirst = false;
+            Items.Last().Last = true;
+        }
+
+
+
+        #endregion
+
+        #region Events
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -188,5 +254,7 @@ namespace WordTes.UI.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        #endregion
     }
 }
