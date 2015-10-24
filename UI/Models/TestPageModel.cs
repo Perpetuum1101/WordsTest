@@ -36,8 +36,7 @@ namespace WordTes.UI.Models
 
             _result = new Result
             {
-                Color = new SolidColorBrush(Colors.White),
-                Message = "Result goes here"
+                Color = new SolidColorBrush(Colors.White)
             };
         }
 
@@ -155,9 +154,13 @@ namespace WordTes.UI.Models
             }
         }
 
-        public ICommand CheckCommand => _checkCommand ?? (_checkCommand = new CommandHandler(Check, _canExecute));
+        public ICommand CheckCommand => _checkCommand ??
+                                       (_checkCommand = new CommandHandler(Check, _canExecute));
 
-        public ICommand ShowAnswerCommand => _correctAnswerCommand ?? (_correctAnswerCommand = new CommandHandler(ShowCorrectAnswerClick, _canExecute));
+        public ICommand ShowAnswerCommand => _correctAnswerCommand ??
+                                            (_correctAnswerCommand =
+                                                 new CommandHandler(ShowCorrectAnswerClick,
+                                                     _canExecute));
 
         public event PropertyChangedEventHandler PropertyChanged;
 
