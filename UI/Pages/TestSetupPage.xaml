@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WordTes.UI.Models"
+    xmlns:services="using:WordTes.UI.Services"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -55,6 +56,7 @@
                          HorizontalAlignment="Stretch"
                          VerticalAlignment="Center"
                          PlaceholderText="Enter test name here"
+                         services:FocusService.IsFocused="{Binding Path=ShowTestName}"
                          Visibility="{Binding ShowTestName,
                                       Converter={StaticResource BoolToVisibility}}" />
             </Grid>
@@ -70,8 +72,10 @@
                                     <ColumnDefinition Width="10*"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBox Text="{Binding Item.Word, Mode=TwoWay}"  
-                                         Loaded="FocusTextBoxOnLoad" />
+                                         PlaceholderText="Word" 
+                                         services:FocusService.IsFocused="{Binding Path=Focus}"/>
                                 <TextBox Grid.Column="1" 
+                                         PlaceholderText="Translation"
                                          Text="{Binding Item.Translation, Mode=TwoWay}" />
                                 <StackPanel Grid.Column="2" 
                                             Orientation="Horizontal" >

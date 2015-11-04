@@ -107,6 +107,7 @@
     </Compile>
     <Compile Include="Models\Result.cs" />
     <Compile Include="Models\TestState.cs" />
+    <Compile Include="Services\FocusService.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Pages\Test.xaml.cs">
       <DependentUpon>Test.xaml</DependentUpon>

@@ -10,6 +10,7 @@ namespace WordTes.UI.Models
         private TestItem _item;
         private bool _first;
         private bool _last;
+        private bool _focus;
 
         public TestItemWrapper()
         {
@@ -24,7 +25,7 @@ namespace WordTes.UI.Models
             set
             {
                 _item = value;
-                OnPropertyChanged(nameof(Item));
+               OnPropertyChanged(nameof(Item));
             }
         }
 
@@ -35,6 +36,16 @@ namespace WordTes.UI.Models
             {
                 _last = value;
                 OnPropertyChanged(nameof(Last));
+            }
+        }
+
+        public bool Focus
+        {
+            get { return _focus; }
+            set
+            {
+                _focus = value;
+                OnPropertyChanged(nameof(Focus));
             }
         }
 

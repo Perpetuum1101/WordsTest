@@ -31,6 +31,7 @@ namespace WordTes.UI.Models
         private string _testName;
         private bool _saveIsEnabled;
         private bool _showTestDeleteButton;
+        private bool _focusTestName;
 
         #endregion
 
@@ -38,14 +39,10 @@ namespace WordTes.UI.Models
 
         public TestSetupPageModel()
         {
-            Items = new ObservableCollection<TestItemWrapper>
-            {
-                new TestItemWrapper
-                {
-                    NotFirst = false,
-                    Last = true
-                }
-            };
+            Items = new ObservableCollection<TestItemWrapper>();
+
+            AddInitialTestItem();
+
             Tests = new ObservableCollection<string>();
             RefreshTestList(DefaulTestName);
             _showTestDeleteButton = false;
@@ -55,6 +52,16 @@ namespace WordTes.UI.Models
         #endregion
 
         #region Properties
+
+        public bool FocusTestName
+        {
+            get { return _focusTestName; }
+            set
+            {
+                _focusTestName = value;
+                OnPropertyChanged(nameof(FocusTestName));
+            }
+        }
 
         public bool ShowTestDeleteButton
         {
@@ -75,6 +82,7 @@ namespace WordTes.UI.Models
                 _currentTest = value;
                 OnPropertyChanged(nameof(CurrentTest));
                 ShowTestName = _currentTest == DefaulTestName;
+                FocusTestName = ShowTestName;
                 ShowTestDeleteButton = !ShowTestName;
 
                 TestName = !ShowTestName ? _currentTest : null;
@@ -113,7 +121,7 @@ namespace WordTes.UI.Models
             set
             {
                 _testName = value;
-                SaveIsEnabled = !string.IsNullOrWhiteSpace(TestName);
+                SaveIsEnabled = !string.IsNullOrWhiteSpace(_testName);
                 OnPropertyChanged(nameof(TestName));
             }
         }
@@ -147,19 +155,44 @@ namespace WordTes.UI.Models
         {
             if (Items.Count != 0)
             {
-                Items.Last().Last = false;
+                var lastItem = Items.Last();
+                if (lastItem != null)
+                {
+                    lastItem.Last = false;
+                    lastItem.Focus = false;
+                }
             }
-            Items.Add(new TestItemWrapper {Last = true});
+
+            if (FocusTestName)
+            {
+                FocusTestName = false;
+            }
+
+            var wrapper = new TestItemWrapper
+            {
+                Last = true,
+                Focus = !FocusTestName
+            };
+
+            Items.Add(wrapper);
         }
 
         public void Remove(TestItemWrapper item)
         {
             Items.Remove(item);
 
-            if (Items.Count != 0)
+            if (Items.Count == 0)
             {
-                Items.Last().Last = true;
-            }   
+                return;
+            }
+
+            var lastItem = Items.Last();
+            if (lastItem == null)
+            {
+                return;
+            }
+            lastItem.Last = true;
+            item.Focus = !FocusTestName;
         }
 
         public void StartTest()
@@ -188,6 +221,11 @@ namespace WordTes.UI.Models
         private void RefreshTestList(string testToSelect)
         {
             Tests.Clear();
+            if (testToSelect == DefaulTestName)
+            {
+                SaveIsEnabled = false;
+            }
+
             var tests = new ObservableCollection<string>(Repository.GetTestsList());
             foreach (var test in tests)
             {
@@ -205,7 +243,7 @@ namespace WordTes.UI.Models
                 return;
             }
             Items.Clear();
-            if (_currentTest == "New")
+            if (_currentTest == DefaulTestName)
             {
                 AddInitialTestItem();
             }
@@ -217,11 +255,13 @@ namespace WordTes.UI.Models
 
         private void AddInitialTestItem()
         {
-            Items.Add(new TestItemWrapper
+            var wrapper = new TestItemWrapper
             {
                 NotFirst = false,
                 Last = true
-            });
+            };
+
+            Items.Add(wrapper);
         }
 
 
@@ -231,17 +271,17 @@ namespace WordTes.UI.Models
 
             foreach (var item in items)
             {
-                Items.Add(new TestItemWrapper
+                var wrapper = new TestItemWrapper
                 {
                     Item = item
-                });
+                };
+
+                Items.Add(wrapper);
             }
 
             Items.First().NotFirst = false;
             Items.Last().Last = true;
         }
-
-
 
         #endregion
 
