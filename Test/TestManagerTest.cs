@@ -62,8 +62,8 @@ namespace WordTest.Tests
             _manager = null;
         }
 
-        [TestCase(CheckState.Incorrect, TestName = "Manager returns 'Incorrect' state if  user input corectness doesn't exceed treshold")]
-        [TestCase(CheckState.Correct, TestName = "Manager returns 'Correct' state if  user input corectness does exceed treshold")]
+        [TestCase(CheckState.Incorrect, TestName = "Manager returns 'Incorrect' state if  user input correctness doesn't exceed treshold")]
+        [TestCase(CheckState.Correct, TestName = "Manager returns 'Correct' state if  user input correctness does exceed treshold")]
         public void CheckUserImput(CheckState shoulBe)
         {
             var item = _manager.Get();

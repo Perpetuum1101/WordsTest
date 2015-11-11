@@ -21,13 +21,22 @@
                 <RowDefinition Height="20*"/>
             </Grid.RowDefinitions>
 
-
-            <TextBlock Grid.Row="0"
-                   Text="{Binding Progress }" 
-                   Style="{StaticResource HeaderTextBlockStyle}"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center" />
-
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Button Style="{StaticResource RoundButtonStyle}">
+                    <SymbolIcon Symbol="Back" />
+                </Button>
+                <TextBlock Grid.Row="0" 
+                           Grid.Column="1"
+                           Text="{Binding Progress }" 
+                           Style="{StaticResource HeaderTextBlockStyle}" 
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Grid>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="4*" />

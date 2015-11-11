@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using Windows.UI.Xaml.Navigation;
-using WordsTest.Model;
+﻿using Windows.UI.Xaml.Navigation;
 using WordTes.UI.Models;
 
 namespace WordTes.UI.Pages
@@ -15,14 +12,19 @@ namespace WordTes.UI.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var items = (IList<TestItem>)e.Parameter;
+            var model = (TestSetupModel)e.Parameter;
+            if (model == null)
+            {
+                return;
+            }
 
             var data = MainGrid.DataContext as TestPageModel;
 
             if (data != null)
             {
-                data.Items = items;
-                data.Init();
+                data.Items = model.Items;
+                data.TestName = model.TestName;
+                data.Init(model.CorrectnessRate);
             }
             
             base.OnNavigatedTo(e);

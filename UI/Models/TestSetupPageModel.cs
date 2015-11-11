@@ -28,10 +28,11 @@ namespace WordTes.UI.Models
         private ITestRepository _repository;
         private string _currentTest;
         private bool _showTestName;
-        private string _testName;
         private bool _saveIsEnabled;
         private bool _showTestDeleteButton;
         private bool _focusTestName;
+
+        private readonly TestSetupModel _model;
 
         #endregion
 
@@ -40,6 +41,7 @@ namespace WordTes.UI.Models
         public TestSetupPageModel()
         {
             Items = new ObservableCollection<TestItemWrapper>();
+            _model = new TestSetupModel();
 
             AddInitialTestItem();
 
@@ -117,14 +119,27 @@ namespace WordTes.UI.Models
 
         public string TestName
         {
-            get { return _testName; }
+            get { return _model.TestName; }
             set
             {
-                _testName = value;
-                SaveIsEnabled = !string.IsNullOrWhiteSpace(_testName);
+                _model.TestName = value;
+                SaveIsEnabled = !string.IsNullOrWhiteSpace(_model.TestName);
                 OnPropertyChanged(nameof(TestName));
             }
         }
+
+        public int CorrectnessRate
+        {
+            get { return _model.CorrectnessRate; }
+            set
+            {
+                _model.CorrectnessRate = value;
+                OnPropertyChanged(nameof(CorrectnessRate));
+                OnPropertyChanged(nameof(CorrectnessRateText));
+            }
+        }
+
+        public string CorrectnessRateText => CorrectnessRate + "%";
 
         #endregion
 
@@ -197,8 +212,9 @@ namespace WordTes.UI.Models
 
         public void StartTest()
         {
-            var items = Items.Select(i => i.Item).ToList();
-            App.NavigationService.Navigate<Pages.Test>(items);
+            _model.Items = Items.Select(i => i.Item).ToList();
+
+            App.NavigationService.Navigate<Pages.Test>(_model);
         }
 
         public void SaveTest()
@@ -263,7 +279,6 @@ namespace WordTes.UI.Models
 
             Items.Add(wrapper);
         }
-
 
         private void LoadTest(string testName)
         {

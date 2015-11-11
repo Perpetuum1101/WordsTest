@@ -15,6 +15,8 @@ namespace WordTes.UI.Models
 {
     public class TestPageModel : INotifyPropertyChanged
     {
+        #region Private
+
         private ICommand _checkCommand;
         private ICommand _correctAnswerCommand;
         private readonly bool _canExecute;
@@ -29,6 +31,10 @@ namespace WordTes.UI.Models
         private bool _showCorrectAnswerButton;
         private bool _showCorrectAnswer;
 
+        #endregion
+
+        #region Constructor
+
         public TestPageModel()
         {
             _canExecute = true;
@@ -40,12 +46,7 @@ namespace WordTes.UI.Models
             };
         }
 
-        public void Init()
-        {
-            _manager = new Manager(Items, 90);
-            CurrentWord = _manager.Get().Word;
-            Progress = "Progress " + _manager.Progress;
-        }
+        #endregion
 
         public IList<TestItem> Items { get; set; }
 
@@ -121,6 +122,8 @@ namespace WordTes.UI.Models
             }
         }
 
+        public string TestName { get; set; }
+
         public TestState CurrentTestState
         {
             get { return _testState; }
@@ -153,6 +156,14 @@ namespace WordTes.UI.Models
                 OnPropertyChanged(nameof(Result));
             }
         }
+
+        public void Init(int correctnessRate)
+        {
+            _manager = new Manager(Items, correctnessRate);
+            CurrentWord = _manager.Get().Word;
+            Progress = "Progress " + _manager.Progress;
+        }
+
 
         public ICommand CheckCommand => _checkCommand ??
                                        (_checkCommand = new CommandHandler(Check, _canExecute));

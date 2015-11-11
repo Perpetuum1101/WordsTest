@@ -101,6 +101,7 @@
     </Compile>
     <Compile Include="Models\BoolToVisibilityConverter.cs" />
     <Compile Include="Models\TestItemWrapper.cs" />
+    <Compile Include="Models\TestSetupModel.cs" />
     <Compile Include="Services\CommandHandler.cs" />
     <Compile Include="Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

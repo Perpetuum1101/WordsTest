@@ -31,7 +31,7 @@
                     <ColumnDefinition Width="5*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition />
+                    <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
 
@@ -61,7 +61,7 @@
                                       Converter={StaticResource BoolToVisibility}}" />
             </Grid>
 
-            <ScrollViewer HorizontalScrollBarVisibility="Auto" Grid.Row="1">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" Grid.Row="1" Margin="0,0,0,10">
                 <ItemsControl ItemsSource="{ Binding Path=Items, Mode=TwoWay }" >
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -101,13 +101,41 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
-            <Grid Grid.Row="2" >
+            <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-
+                <Grid Column="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="6*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Correctness rate:"
+                               TextWrapping="WrapWholeWords"
+                               TextTrimming="None"
+                               FontSize="20"
+                               Grid.Column="0"
+                               HorizontalAlignment="Right"
+                               Margin="5"
+                               VerticalAlignment="Center"/>
+                    <Slider Maximum="100" 
+                            MinWidth="100"
+                            Minimum="75"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Value="{Binding Path=CorrectnessRate, Mode=TwoWay}"
+                            Margin="5" 
+                            Style="{StaticResource CustomSlider}"/>
+                    <TextBlock Text="{Binding CorrectnessRateText}"
+                               Grid.Column="2"
+                               FontSize="24"
+                               Margin="5"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"/>
+                </Grid>
                 <Button Command="{Binding SaveCommand}"
                         Margin="5"
                         Style="{StaticResource RoundButtonStyle}"

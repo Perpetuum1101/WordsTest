@@ -26,17 +26,17 @@ namespace WordTes.UI.Pages
 
                 if (data != null)
                 {
-                    data.Items = new ObservableCollection<TestItemWrapper>();
-                    foreach (var item in items)
-                    {
-                        data.Items.Add(new TestItemWrapper
-                        {
-                            Item = item,
-                        });
-                    }
+                    //data.Items = new ObservableCollection<TestItemWrapper>();
+                    //foreach (var item in items)
+                    //{
+                    //    data.Items.Add(new TestItemWrapper
+                    //    {
+                    //        Item = item,
+                    //    });
+                    //}
 
-                    data.Items.First().NotFirst = false;
-                    data.Items.Last().Last = true;
+                    //data.Items.First().NotFirst = false;
+                    //data.Items.Last().Last = true;
                 }
             }
 
