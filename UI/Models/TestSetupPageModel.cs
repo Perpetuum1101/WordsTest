@@ -13,7 +13,7 @@ namespace WordTes.UI.Models
     {
         #region Constants
 
-        public string DefaulTestName = "New";
+        public const string DefaulTestName = "New";
 
         #endregion
 
@@ -213,6 +213,10 @@ namespace WordTes.UI.Models
         public void StartTest()
         {
             _model.Items = Items.Select(i => i.Item).ToList();
+            if (string.IsNullOrWhiteSpace(_model.TestName))
+            {
+                _model.TestName = TestSetupModel.DefaultTestName;
+            }
 
             App.NavigationService.Navigate<Pages.Test>(_model);
         }

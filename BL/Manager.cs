@@ -41,7 +41,7 @@ namespace WordTest.Manager
             return _currentItem;
         }
 
-        public string Progress => $"{_originalLength}/{_completed}";
+        public string Progress => $"{_completed}/{_originalLength}";
 
         public CheckResult Check(string input)
         {
@@ -67,14 +67,12 @@ namespace WordTest.Manager
                     : CheckState.Incorrect;
             }
 
+            result.CorrectAnswer = _currentItem.Translation;
+
             if (result.State == CheckState.Correct)
             {
                 _completed++;
                 _currentItem = null;
-            }
-            else
-            {
-                result.CorrectAnswer = _currentItem.Translation;
             }
 
             if (result.State == CheckState.Correct && _items.Count == 0)

@@ -19,6 +19,7 @@ namespace WordTes.UI.Models
 
         private ICommand _checkCommand;
         private ICommand _correctAnswerCommand;
+        private ICommand _backCommand;
         private readonly bool _canExecute;
         private IManager _manager;
         private Result _result;
@@ -66,7 +67,7 @@ namespace WordTes.UI.Models
 
             set
             {
-                _showCorrectAnswer = value; 
+                _showCorrectAnswer = value;
                 OnPropertyChanged(nameof(ShowCorrectAnswer));
             }
 
@@ -173,6 +174,9 @@ namespace WordTes.UI.Models
                                                  new CommandHandler(ShowCorrectAnswerClick,
                                                      _canExecute));
 
+        public ICommand BackCommand => _backCommand ??
+                                      (_backCommand = new CommandHandler(Back, _canExecute));
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -198,7 +202,7 @@ namespace WordTes.UI.Models
                     ShowCorrectAnswer = false;
                     break;
                 case TestState.Done:
-                    App.NavigationService.Navigate<Pages.TestSetupPage>(Items);
+                    Back();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -210,15 +214,21 @@ namespace WordTes.UI.Models
             ShowCorrectAnswer = true;
         }
 
+        public void Back()
+        {
+            App.NavigationService.Navigate<Pages.TestSetupPage>(new TestSetupModel
+            {
+                Items = Items,
+                TestName = TestName,
+            });
+        }
+
         private void ChangeStateByResult(CheckResult result)
         {
             switch (result.State)
             {
                 case CheckState.Correct:
-                    Result.Message = string.Format("Correct! ({0}%)", result.Correctness);
-                    Progress = "Progress " + _manager.Progress;
-                    Result.Color = new SolidColorBrush(Colors.Green);
-                    CurrentTestState = TestState.Next;
+                    ChangeState(result, TestState.Next, "Progress " + _manager.Progress);
                     break;
                 case CheckState.Incorrect:
                     Result.Message = string.Format("Incorrect! ({0}%)", result.Correctness);
@@ -228,14 +238,25 @@ namespace WordTes.UI.Models
                     ShowCorrectAnswerButton = true;
                     break;
                 case CheckState.Done:
-                    Result.Message = string.Format("Correct! ({0}%)", result.Correctness);
-                    Result.Color = new SolidColorBrush(Colors.Green);
-                    CurrentTestState = TestState.Done;
-                    Progress = "All done!";
+                    ChangeState(result, TestState.Done, "All done!");
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private void ChangeState(CheckResult result, TestState state, string progressText)
+        {
+            Result.Message = string.Format("Correct! ({0}%)", result.Correctness);
+            Result.Color = new SolidColorBrush(Colors.Green);
+            CurrentTestState = state;
+
+            if (result.Correctness != 100)
+            {
+                CorrectAnswer = result.CorrectAnswer;
+                ShowCorrectAnswerButton = true;
+            }
+            Progress = progressText;
         }
     }
 }

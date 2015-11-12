@@ -1,10 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+﻿using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Navigation;
-using WordsTest.Model;
 using WordTes.UI.Models;
 
 namespace WordTes.UI.Pages
@@ -18,35 +13,37 @@ namespace WordTes.UI.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var items = (IList<TestItem>)e.Parameter;
+            var model = (TestSetupModel)e.Parameter;
 
-            if (items != null && items.Count != 0)
+            if (model != null)
             {
                 var data = MainGrid.DataContext as TestSetupPageModel;
 
                 if (data != null)
                 {
-                    //data.Items = new ObservableCollection<TestItemWrapper>();
-                    //foreach (var item in items)
-                    //{
-                    //    data.Items.Add(new TestItemWrapper
-                    //    {
-                    //        Item = item,
-                    //    });
-                    //}
+                    if (model.TestName == TestSetupModel.DefaultTestName ||
+                        !data.Tests.Contains(model.TestName))
+                    {
+                        model.TestName = TestSetupPageModel.DefaulTestName;
+                    }
 
-                    //data.Items.First().NotFirst = false;
-                    //data.Items.Last().Last = true;
+                    data.CurrentTest = model.TestName;
+                    
+                    if (data.TestName == TestSetupPageModel.DefaulTestName)
+                    {
+                        data.Items = new ObservableCollection<TestItemWrapper>();
+                        foreach (var item in model.Items)
+                        {
+                            data.Items.Add(new TestItemWrapper
+                            {
+                                Item = item,
+                            });
+                        }
+                    }
                 }
             }
 
             base.OnNavigatedTo(e);
-        }
-
-        private void FocusTextBoxOnLoad(object sender, RoutedEventArgs e)
-        {
-            var textbox = sender as TextBox;
-            textbox?.Focus(FocusState.Keyboard);
         }
     }
 }

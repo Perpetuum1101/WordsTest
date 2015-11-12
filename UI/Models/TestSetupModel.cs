@@ -5,11 +5,13 @@ namespace WordTes.UI.Models
 {
     public class TestSetupModel
     {
+        public const string DefaultTestName = "Untitled Test";
+
         public TestSetupModel()
         {
             Items = new List<TestItem>();
             CorrectnessRate = 75;
-            TestName = "New Test";
+            TestName = DefaultTestName;
         }
         
         public string TestName { get; set; }
