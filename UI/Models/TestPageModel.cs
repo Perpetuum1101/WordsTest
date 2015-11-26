@@ -20,6 +20,7 @@ namespace WordTes.UI.Models
         private ICommand _checkCommand;
         private ICommand _correctAnswerCommand;
         private ICommand _backCommand;
+        private ICommand _popupButtonOkCommand;
         private readonly bool _canExecute;
         private IManager _manager;
         private Result _result;
@@ -31,6 +32,7 @@ namespace WordTes.UI.Models
         private string _correctAnswer;
         private bool _showCorrectAnswerButton;
         private bool _showCorrectAnswer;
+        private bool _popupEnabled;
 
         #endregion
 
@@ -48,6 +50,8 @@ namespace WordTes.UI.Models
         }
 
         #endregion
+
+        #region Properties
 
         public IList<TestItem> Items { get; set; }
 
@@ -158,12 +162,20 @@ namespace WordTes.UI.Models
             }
         }
 
-        public void Init(int correctnessRate)
+        public bool PopupEnabled
         {
-            _manager = new Manager(Items, correctnessRate);
-            CurrentWord = _manager.Get().Word;
-            Progress = "Progress " + _manager.Progress;
+            get { return _popupEnabled; }
+
+            set
+            {
+                _popupEnabled = value;
+                OnPropertyChanged(nameof(PopupEnabled));
+            }
         }
+
+        #endregion
+
+        #region Fields
 
 
         public ICommand CheckCommand => _checkCommand ??
@@ -171,18 +183,28 @@ namespace WordTes.UI.Models
 
         public ICommand ShowAnswerCommand => _correctAnswerCommand ??
                                             (_correctAnswerCommand =
-                                                 new CommandHandler(ShowCorrectAnswerClick,
+                                                 new CommandHandler(
+                                                     ShowCorrectAnswerClick,
                                                      _canExecute));
 
         public ICommand BackCommand => _backCommand ??
                                       (_backCommand = new CommandHandler(Back, _canExecute));
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public ICommand PopupButtonOkCommand => _popupButtonOkCommand ??
+                                                (_popupButtonOkCommand =
+                                                    new CommandHandler(
+                                                        BackPopupOkClick,
+                                                        _canExecute));
 
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        #endregion
+
+        #region Public Methos
+
+        public void Init(int correctnessRate)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            _manager = new Manager(Items, correctnessRate);
+            CurrentWord = _manager.Get().Word;
+            Progress = "Progress " + _manager.Progress;
         }
 
         public void Check()
@@ -216,12 +238,22 @@ namespace WordTes.UI.Models
 
         public void Back()
         {
+            OnPopupEnabledInvoke();
+        }
+
+        public void BackPopupOkClick()
+        {
+            OnPopupDisabledInvoke();
             App.NavigationService.Navigate<Pages.TestSetupPage>(new TestSetupModel
             {
                 Items = Items,
                 TestName = TestName,
             });
-        }
+        } 
+
+        #endregion
+
+        #region Private Methods
 
         private void ChangeStateByResult(CheckResult result)
         {
@@ -258,5 +290,35 @@ namespace WordTes.UI.Models
             }
             Progress = progressText;
         }
+
+        #endregion
+
+        #region Events
+
+        public delegate void  PopupHandler();
+
+        public event PopupHandler OnPopupEnabled;
+        public event PopupHandler OnPopupDisabled;
+
+        private void OnPopupEnabledInvoke()
+        {
+            OnPopupEnabled?.Invoke();
+        }
+
+        private void OnPopupDisabledInvoke()
+        {
+            OnPopupDisabled?.Invoke();
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
     }
 }

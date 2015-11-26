@@ -31,6 +31,7 @@ namespace WordTes.UI.Models
         private bool _saveIsEnabled;
         private bool _showTestDeleteButton;
         private bool _focusTestName;
+        private string _validationMessage;
 
         private readonly TestSetupModel _model;
 
@@ -141,6 +142,20 @@ namespace WordTes.UI.Models
 
         public string CorrectnessRateText => CorrectnessRate + "%";
 
+        public string ValidationMessage
+        {
+            get { return _validationMessage; }
+            set
+            {
+                _validationMessage = value;
+                if (!string.IsNullOrEmpty(_validationMessage))
+                {
+                    OnPopupEnabledInvoke();
+                }
+                OnPropertyChanged(nameof(ValidationMessage));
+            }
+        }
+
         #endregion
 
         #region Fields
@@ -212,7 +227,15 @@ namespace WordTes.UI.Models
 
         public void StartTest()
         {
-            _model.Items = Items.Select(i => i.Item).ToList();
+            var items = Items.Select(i => i.Item).ToList();
+            var corrected = Validator.Correct(items);
+            ValidationMessage = Validator.Validate(corrected, "start");
+            if (!string.IsNullOrEmpty(ValidationMessage))
+            {
+                return;
+            }
+
+            _model.Items = corrected;
             if (string.IsNullOrWhiteSpace(_model.TestName))
             {
                 _model.TestName = TestSetupModel.DefaultTestName;
@@ -224,7 +247,13 @@ namespace WordTes.UI.Models
         public void SaveTest()
         {
             var testItems = Items.Select(item => item.Item).ToList();
-            Repository.SaveTest(TestName, testItems);
+            var corrected = Validator.Correct(testItems);
+            ValidationMessage = Validator.Validate(corrected, "save");
+            if (!string.IsNullOrEmpty(ValidationMessage))
+            {
+                return;
+            }
+            Repository.SaveTest(TestName, corrected);
             RefreshTestList(TestName);
         }
 
@@ -305,6 +334,15 @@ namespace WordTes.UI.Models
         #endregion
 
         #region Events
+
+        public delegate void PopupHandler();
+
+        public event PopupHandler OnPopupEnabled;
+
+        private void OnPopupEnabledInvoke()
+        {
+            OnPopupEnabled?.Invoke();
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

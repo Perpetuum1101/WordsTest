@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Navigation;
 using WordTes.UI.Models;
 
@@ -6,9 +7,17 @@ namespace WordTes.UI.Pages
 {
     public sealed partial class TestSetupPage
     {
+        private readonly TestSetupPageModel _pageModel;
+
         public TestSetupPage()
         {
             InitializeComponent();
+
+            _pageModel = MainGrid.DataContext as TestSetupPageModel;
+            if (_pageModel != null)
+            {
+                _pageModel.OnPopupEnabled += OnPopupEnabled;
+            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -17,24 +26,22 @@ namespace WordTes.UI.Pages
 
             if (model != null)
             {
-                var data = MainGrid.DataContext as TestSetupPageModel;
-
-                if (data != null)
+                if (_pageModel != null)
                 {
                     if (model.TestName == TestSetupModel.DefaultTestName ||
-                        !data.Tests.Contains(model.TestName))
+                        !_pageModel.Tests.Contains(model.TestName))
                     {
                         model.TestName = TestSetupPageModel.DefaulTestName;
                     }
 
-                    data.CurrentTest = model.TestName;
+                    _pageModel.CurrentTest = model.TestName;
                     
-                    if (data.TestName == TestSetupPageModel.DefaulTestName)
+                    if (_pageModel.TestName == TestSetupPageModel.DefaulTestName)
                     {
-                        data.Items = new ObservableCollection<TestItemWrapper>();
+                        _pageModel.Items = new ObservableCollection<TestItemWrapper>();
                         foreach (var item in model.Items)
                         {
-                            data.Items.Add(new TestItemWrapper
+                            _pageModel.Items.Add(new TestItemWrapper
                             {
                                 Item = item,
                             });
@@ -44,6 +51,11 @@ namespace WordTes.UI.Pages
             }
 
             base.OnNavigatedTo(e);
+        }
+
+        private async void OnPopupEnabled()
+        {
+           await ValidationDialog.ShowAsync();
         }
     }
 }

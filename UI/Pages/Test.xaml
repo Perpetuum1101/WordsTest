@@ -12,9 +12,8 @@
         <models:BoolToVisibilityConverter x:Key="BoolToVisibility" />
     </Page.Resources>
 
-    <Grid>
-        <Grid DataContext="{Binding Source={StaticResource TestModel}}"
-              x:Name="MainGrid">
+    <Grid DataContext="{Binding Source={StaticResource TestModel}}">
+        <Grid x:Name="MainGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="20*" />
                 <RowDefinition Height="80*"/>
@@ -104,6 +103,19 @@
                            Style="{StaticResource HeaderTextBlockStyle}" />
             </Grid>
         </Grid>
+
+        <ContentDialog x:Name="ConfirmationDialog"
+                       VerticalAlignment="Stretch"
+                       Title="Information"
+                       PrimaryButtonText="Ok"
+                       SecondaryButtonText="Cancel"
+                       PrimaryButtonCommand="{Binding PopupButtonOkCommand}"
+                       MaxWidth="{Binding ActualWidth, ElementName=pageRoot}">
+            <StackPanel>
+                <TextBlock Text="Test progress will be lost! Go back? " TextWrapping="Wrap" />
+            </StackPanel>
+
+        </ContentDialog>
 
     </Grid>
 </Page>

@@ -151,5 +151,16 @@
                 </Button>
             </Grid>
         </Grid>
+
+        <ContentDialog x:Name="ValidationDialog"
+                       VerticalAlignment="Stretch"
+                       Title="Information"
+                       PrimaryButtonText="Close"
+                       MaxWidth="{Binding ActualWidth, ElementName=pageRoot}">
+            <StackPanel>
+                <TextBlock Text="{Binding Path=ValidationMessage}" TextWrapping="Wrap" />
+            </StackPanel>
+
+        </ContentDialog>
     </Grid>
 </Page>
