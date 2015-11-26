@@ -32,6 +32,7 @@ namespace WordTes.UI.Models
         private bool _showTestDeleteButton;
         private bool _focusTestName;
         private string _validationMessage;
+        private readonly Windows.Storage.ApplicationDataContainer _localSettings;
 
         private readonly TestSetupModel _model;
 
@@ -41,8 +42,14 @@ namespace WordTes.UI.Models
 
         public TestSetupPageModel()
         {
+            _localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             Items = new ObservableCollection<TestItemWrapper>();
             _model = new TestSetupModel();
+            var rate =_localSettings.Values[nameof(CorrectnessRate)];
+            if (rate is int)
+            {
+                _model.CorrectnessRate = (int)rate;
+            }
 
             AddInitialTestItem();
 
@@ -134,7 +141,14 @@ namespace WordTes.UI.Models
             get { return _model.CorrectnessRate; }
             set
             {
+                if (value != _model.CorrectnessRate)
+                {
+                    _localSettings.Values[nameof(CorrectnessRate)] = value;
+                }
+
                 _model.CorrectnessRate = value;
+                
+
                 OnPropertyChanged(nameof(CorrectnessRate));
                 OnPropertyChanged(nameof(CorrectnessRateText));
             }

@@ -124,6 +124,7 @@
                     <Slider Maximum="100" 
                             MinWidth="100"
                             Minimum="75"
+                            StepFrequency="5"
                             Grid.Column="1"
                             VerticalAlignment="Center"
                             Value="{Binding Path=CorrectnessRate, Mode=TwoWay}"
