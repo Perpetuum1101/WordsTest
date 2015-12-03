@@ -2,7 +2,7 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
-namespace WordTes.UI.Models
+namespace WordTes.UI.Services
 {
     public class BoolToVisibilityConverter : IValueConverter
     {

@@ -10,7 +10,7 @@
 
     <Page.Resources>
         <models:TestSetupPageModel x:Key="PageModel" />
-        <models:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+        <services:BoolToVisibilityConverter x:Key="BoolToVisibility" />
     </Page.Resources>
 
     <Grid x:Name="MainGrid" DataContext="{StaticResource ResourceKey=PageModel}">

@@ -12,35 +12,7 @@ namespace WordTest.Tests
         private IList<TestItem> _list;
         private IManager _manager;
 
-        private static string CorrectInputByWord(string word)
-        {
-            switch (word)
-            {
-                case "A":
-                    return "aax";
-                case "B":
-                    return "bbx";
-                case "C":
-                    return "ccx";
-            }
-
-            return string.Empty;
-        }
-
-        private static string IncorrectInputByWord(string word)
-        {
-            switch (word)
-            {
-                case "A":
-                    return "axx";
-                case "B":
-                    return "bxx";
-                case "C":
-                    return "cxx";
-            }
-
-            return string.Empty;
-        }
+        #region Intalization
 
         [SetUp]
         public void SetUp()
@@ -61,6 +33,10 @@ namespace WordTest.Tests
             _list = null;
             _manager = null;
         }
+
+        #endregion
+
+        #region Tests
 
         [TestCase(CheckState.Incorrect, TestName = "Manager returns 'Incorrect' state if  user input correctness doesn't exceed treshold")]
         [TestCase(CheckState.Correct, TestName = "Manager returns 'Correct' state if  user input correctness does exceed treshold")]
@@ -129,5 +105,41 @@ namespace WordTest.Tests
 
             result.State.ShouldBeEquivalentTo(CheckState.Done);
         }
+
+        #endregion
+
+        #region Private
+
+        private static string CorrectInputByWord(string word)
+        {
+            switch (word)
+            {
+                case "A":
+                    return "aax";
+                case "B":
+                    return "bbx";
+                case "C":
+                    return "ccx";
+            }
+
+            return string.Empty;
+        }
+
+        private static string IncorrectInputByWord(string word)
+        {
+            switch (word)
+            {
+                case "A":
+                    return "axx";
+                case "B":
+                    return "bxx";
+                case "C":
+                    return "cxx";
+            }
+
+            return string.Empty;
+        }
+
+        #endregion
     }
 }

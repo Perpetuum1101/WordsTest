@@ -5,11 +5,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WordTes.UI.Models"
+    xmlns:services="using:WordTes.UI.Services"
     mc:Ignorable="d">
 
     <Page.Resources>
         <models:TestPageModel x:Key="TestModel" />
-        <models:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+        <services:BoolToVisibilityConverter x:Key="BoolToVisibility" />
     </Page.Resources>
 
     <Grid DataContext="{Binding Source={StaticResource TestModel}}">
