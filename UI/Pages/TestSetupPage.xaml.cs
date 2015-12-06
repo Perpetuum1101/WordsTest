@@ -22,7 +22,7 @@ namespace WordTes.UI.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var model = (TestSetupModel)e.Parameter;
+            var model = e.Parameter as TestSetupModel;
 
             if (model != null)
             {

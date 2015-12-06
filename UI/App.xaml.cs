@@ -4,8 +4,8 @@ using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using WordTes.UI.Pages;
 using WordTes.UI.Services;
-using MainPage = WordTes.UI.Pages.MainPage;
 
 namespace WordTes.UI
 {
@@ -68,7 +68,7 @@ namespace WordTes.UI
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                rootFrame.Navigate(typeof(TestSetupPage), e.Arguments);
             }
             // Ensure the current window is active
             Window.Current.Activate();
