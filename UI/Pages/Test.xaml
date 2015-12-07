@@ -24,6 +24,7 @@
             <Grid Grid.Row="0" Background="#5555">
                 <Button Style="{StaticResource RoundButtonStyle}"
                         Command="{Binding Path=BackCommand}"
+                        Margin="5"
                         HorizontalAlignment="Left">
                     <SymbolIcon Symbol="Back" />
                 </Button>
