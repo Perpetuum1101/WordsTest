@@ -238,17 +238,20 @@ namespace WordTes.UI.Models
 
         public void Back()
         {
-            OnPopupEnabledInvoke();
+            if (_manager.Completed == _manager.OriginalLength)
+            {
+                GoBack();
+            }
+            else
+            {
+                OnPopupEnabledInvoke();
+            }
         }
 
         public void BackPopupOkClick()
         {
             OnPopupDisabledInvoke();
-            App.NavigationService.Navigate<Pages.TestSetupPage>(new TestSetupModel
-            {
-                Items = Items,
-                TestName = TestName,
-            });
+            GoBack();
         } 
 
         #endregion
@@ -289,6 +292,15 @@ namespace WordTes.UI.Models
                 ShowCorrectAnswerButton = true;
             }
             Progress = progressText;
+        }
+
+        private void GoBack()
+        {
+            App.NavigationService.Navigate<Pages.TestSetupPage>(new TestSetupModel
+            {
+                Items = Items,
+                TestName = TestName,
+            });
         }
 
         #endregion

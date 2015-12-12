@@ -10,16 +10,14 @@ namespace WordTest.Manager
         private readonly Random _random;
         private readonly int _treshold;
         private TestItem _currentItem;
-        private readonly int _originalLength;
-        private int _completed;
 
         public Manager(IEnumerable<TestItem> items, int treshold)
         {
             _items = new List<TestItem>(items);
-            _originalLength = _items.Count;
+            OriginalLength = _items.Count;
             _random = new Random();
             _treshold = treshold;
-            _completed = 0;
+            Completed = 0;
         }
 
         public TestItem Get()
@@ -41,7 +39,11 @@ namespace WordTest.Manager
             return _currentItem;
         }
 
-        public string Progress => $"{_completed}/{_originalLength}";
+        public string Progress => $"{Completed}/{OriginalLength}";
+
+        public int Completed { get; private set; }
+
+        public int OriginalLength { get; }
 
         public CheckResult Check(string input)
         {
@@ -71,7 +73,7 @@ namespace WordTest.Manager
 
             if (result.State == CheckState.Correct)
             {
-                _completed++;
+                Completed++;
                 _currentItem = null;
             }
 
