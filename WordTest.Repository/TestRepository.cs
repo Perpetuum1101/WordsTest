@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using SQLite.Net;
 using SQLite.Net.Platform.WinRT;
 using WordTest.Repository.Tabels;
@@ -48,8 +49,14 @@ namespace WordTest.Repository
             return result;
         }
 
+        public async Task SaveAsync(string testName, IList<TestItem> testItems)
+        {
+            await Task.Run(() => SaveTest(testName, testItems));
+        }
+
         public void SaveTest(string testName, IList<TestItem> testItems)
         {
+           
             if (string.IsNullOrWhiteSpace(testName))
             {
                 throw new ArgumentNullException(nameof(testName));
@@ -96,8 +103,9 @@ namespace WordTest.Repository
                         TestId = testId
                     };
 
-                    conn.Insert(testItem);
+                   conn.Insert(testItem);
                 }
+               
             }
         }
 

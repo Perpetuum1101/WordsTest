@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using UI.Annotations;
 using WordTes.UI.Services;
@@ -31,9 +32,10 @@ namespace WordTes.UI.Models
         private bool _saveIsEnabled;
         private bool _showTestDeleteButton;
         private bool _focusTestName;
-        private string _validationMessage;
-        private readonly Windows.Storage.ApplicationDataContainer _localSettings;
+        private string _popupMessage;
+        private bool _popupCloseEnabled;
 
+        private readonly Windows.Storage.ApplicationDataContainer _localSettings;
         private readonly TestSetupModel _model;
 
         #endregion
@@ -57,6 +59,7 @@ namespace WordTes.UI.Models
             RefreshTestList(DefaulTestName);
             _showTestDeleteButton = false;
             _canExecute = true;
+            PopupCloseEnabled = true;
         }
 
         #endregion
@@ -154,19 +157,29 @@ namespace WordTes.UI.Models
             }
         }
 
-        public string CorrectnessRateText => CorrectnessRate + "%";
-
-        public string ValidationMessage
+        public bool PopupCloseEnabled
         {
-            get { return _validationMessage; }
+            get { return _popupCloseEnabled; }
             set
             {
-                _validationMessage = value;
-                if (!string.IsNullOrEmpty(_validationMessage))
+                _popupCloseEnabled = value;
+                OnPropertyChanged(nameof(PopupCloseEnabled));
+            }
+        }
+
+        public string CorrectnessRateText => CorrectnessRate + "%";
+
+        public string PopupMessage
+        {
+            get { return _popupMessage; }
+            set
+            {
+                _popupMessage = value;
+                if (!string.IsNullOrEmpty(_popupMessage))
                 {
                     OnPopupEnabledInvoke();
                 }
-                OnPropertyChanged(nameof(ValidationMessage));
+                OnPropertyChanged(nameof(PopupMessage));
             }
         }
 
@@ -243,8 +256,8 @@ namespace WordTes.UI.Models
         {
             var items = Items.Select(i => i.Item).ToList();
             var corrected = Validator.Correct(items);
-            ValidationMessage = Validator.Validate(corrected, "start");
-            if (!string.IsNullOrEmpty(ValidationMessage))
+            PopupMessage = Validator.Validate(corrected, "start");
+            if (!string.IsNullOrEmpty(PopupMessage))
             {
                 return;
             }
@@ -262,13 +275,25 @@ namespace WordTes.UI.Models
         {
             var testItems = Items.Select(item => item.Item).ToList();
             var corrected = Validator.Correct(testItems);
-            ValidationMessage = Validator.Validate(corrected, "save");
-            if (!string.IsNullOrEmpty(ValidationMessage))
+            PopupMessage = Validator.Validate(corrected, "save");
+            if (string.IsNullOrWhiteSpace(PopupMessage))
+            {
+                PopupMessage = "Saving...";
+                PopupCloseEnabled = false;
+            }
+            else
             {
                 return;
             }
-            Repository.SaveTest(TestName, corrected);
-            RefreshTestList(TestName);
+
+            Repository
+                .SaveAsync(TestName, corrected)
+                .ContinueWith(c =>
+                {
+                    RefreshTestList(TestName);
+                    PopupMessage = $"Test {TestName} was successufully saved!";
+                    PopupCloseEnabled = true;
+                }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         public void DeleteTest()

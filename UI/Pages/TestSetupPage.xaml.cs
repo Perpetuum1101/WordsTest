@@ -8,10 +8,13 @@ namespace WordTes.UI.Pages
     public sealed partial class TestSetupPage
     {
         private readonly TestSetupPageModel _pageModel;
+        private bool _dialogShown;
 
         public TestSetupPage()
         {
             InitializeComponent();
+
+            InformationDialog.Closed += (sender, args) => _dialogShown = false; 
 
             _pageModel = MainGrid.DataContext as TestSetupPageModel;
             if (_pageModel != null)
@@ -55,7 +58,13 @@ namespace WordTes.UI.Pages
 
         private async void OnPopupEnabled()
         {
-           await ValidationDialog.ShowAsync();
+            if (_dialogShown)
+            {
+                return;
+            }
+
+            _dialogShown = true;
+            await InformationDialog.ShowAsync();
         }
     }
 }

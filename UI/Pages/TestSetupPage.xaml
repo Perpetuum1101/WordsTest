@@ -165,13 +165,14 @@
             </Grid>
         </Grid>
 
-        <ContentDialog x:Name="ValidationDialog"
+        <ContentDialog x:Name="InformationDialog"
                        VerticalAlignment="Stretch"
                        Title="Information"
                        PrimaryButtonText="Close"
+                       IsPrimaryButtonEnabled="{Binding PopupCloseEnabled}"
                        MaxWidth="{Binding ActualWidth, ElementName=pageRoot}">
             <StackPanel>
-                <TextBlock Text="{Binding Path=ValidationMessage}" TextWrapping="Wrap" />
+                <TextBlock Text="{Binding Path=PopupMessage}" TextWrapping="Wrap" />
             </StackPanel>
 
         </ContentDialog>
