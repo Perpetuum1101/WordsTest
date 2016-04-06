@@ -1,4 +1,5 @@
-﻿using SQLite.Net.Attributes;
+﻿using System;
+using SQLite.Net.Attributes;
 
 namespace WordTest.Repository.Tabels
 {
@@ -13,5 +14,9 @@ namespace WordTest.Repository.Tabels
         public string Translation { get; set; }
 
         public int? TestId { get; set; }
+
+        public DateTime Sync { get; set; }
+
+        public bool Deleted { get; set; }
     }
 }

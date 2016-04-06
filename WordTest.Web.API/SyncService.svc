@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="WordTest.Web.API.Service1" CodeBehind="SyncService.svc.cs" %>
